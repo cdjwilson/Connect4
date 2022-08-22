@@ -1,37 +1,60 @@
 import java.util.Scanner;
 
+import javax.print.attribute.ResolutionSyntax;
+
+
 class ConnectFour {
     
-    static int checkWinner(int[][] board) {
+    static int[][] checkWinner(int[][] board) {
+        int[][] result = new int[3][2];
         for (int i = board.length - 1; i >= 0; i--) {
             for (int j = 0; j < board[i].length; j++) {
                 if (board[i][j] != 0) {
                     int player = board[i][j];
                     if (j < board[i].length - 3) {
                         if (player == board[i][j+1] && player == board[i][j+2] && player == board[i][j+3]) {
-                            System.out.println("checking for winner");
-                            return player;
+                            result[0][0] = player;
+                            result[1][0] = i;
+                            result[1][1] = j;
+                            result[2][0] = i;
+                            result[2][1] = j+3;
+                            return result;
                         }
                     }
                     if (i > 2) {
                         if (player == board[i-1][j] && player == board[i-2][j] && player == board[i-3][j]) {
-                            return player;
+                            result[0][0] = player;
+                            result[1][0] = i;
+                            result[1][1] = j;
+                            result[2][0] = i-3;
+                            result[2][1] = j;
+                            return result;
                         }
                     }
                     if (i > 2 && j < board[i].length -3) {
                         if (player == board[i-1][j+1] && player == board[i-2][j+2] && player == board[i-3][j+3]) {
-                            return player;
+                            result[0][0] = player;
+                            result[1][0] = i;
+                            result[1][1] = j;
+                            result[2][0] = i-3;
+                            result[2][1] = j+3;
+                            return result;
                         }
                     }
                     if (i > 2 && j > 2) {
                         if (player == board[i-1][j-1] && player == board[i-2][j-2] && player == board[i-3][j-3]) {
-                            return player;
+                            result[0][0] = player;
+                            result[1][0] = i;
+                            result[1][1] = j;
+                            result[2][0] = i-3;
+                            result[2][1] = j-3;
+                            return result;
                         }
                     }
                 }
             }
         }
-        return 0;
+        return result;
     }
 
     static void printBoard(int[][] board) {
@@ -54,7 +77,6 @@ class ConnectFour {
         for (int i = board.length - 1; i >= 0; i--) {
             if (board[i][placement - 1] == 0) {
                 board[i][placement - 1] = player;
-                player = player*-1;
                 return true;
             }
         }
@@ -94,16 +116,16 @@ class ConnectFour {
 
         int[][] board = new int[6][7];
         int player = 1;
-        int winner = 0;
+        int[][] winner;
         printBoard(board);
-        
+        int[] move = connect4ai.getBestMove(board);
         while (true) {
         
             getPiecePlacement(board, player);
             printBoard(board);
             player = (player % 2) + 1;
             winner = checkWinner(board);
-            if (winner != 0) {
+            if (winner[0][0] != 0) {
                 System.out.println("Winner is player " + winner);
                 return;
             }
