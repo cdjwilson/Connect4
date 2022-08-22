@@ -1,7 +1,5 @@
 import java.util.Scanner;
 
-import javax.print.attribute.ResolutionSyntax;
-
 
 class ConnectFour {
     
@@ -118,7 +116,6 @@ class ConnectFour {
         int player = 1;
         int[][] winner;
         printBoard(board);
-        int[] move = connect4ai.getBestMove(board);
         while (true) {
         
             getPiecePlacement(board, player);
