@@ -11,20 +11,42 @@ public class connect4panel extends JPanel implements MouseListener {
     static JLabel PLAYER = new JLabel();
     static int[][] board = new int[6][7];
     static boolean running = false;
+    static final String[] playerChoices = {"1", "2"};
+    static JLabel NUMBER_PLAYER_LABEL = new JLabel("Select the Number of Players");
+    static JComboBox NUMBER_OF_PLAYERS = new JComboBox(playerChoices);
+    static JButton start = new JButton("Start Game");
+    static int numPlayers = 0;
     connect4panel() {
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.WHITE);
         this.setFocusable(true);
         this.addMouseListener(this);
+        this.add(NUMBER_PLAYER_LABEL);
+        this.add(NUMBER_OF_PLAYERS);
+        this.add(start);
+        start.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+                numPlayers = Integer.parseInt( (String) NUMBER_OF_PLAYERS.getSelectedItem() );
+                remove(NUMBER_OF_PLAYERS);
+                remove(NUMBER_PLAYER_LABEL);
+                remove(start);
+                startGame();
+            }
+
+        });
         
-        PLAYER.setFont(new Font("Helvetica", Font.PLAIN, 70));
-        this.add(PLAYER);
-        
-        startGame();
+        //startGame();
     }
     
     public void startGame() {
+        PLAYER.setFont(new Font("Helvetica", Font.PLAIN, 70));
+        this.add(PLAYER);
         running = true;
+        repaint();
+
     }
     
     public void paintComponent(Graphics g) {
@@ -35,6 +57,16 @@ public class connect4panel extends JPanel implements MouseListener {
     
     public void draw(Graphics g) {
         if(running) {
+            if (numPlayers == 1) {
+                if (ConnectFour.checkWinner(board)[0][0] == 0) {
+                    if (PLAYERNUM == 2) {
+                        int move = connect4ai.easyAi(board, PLAYERNUM);
+                        if (ConnectFour.isLegalPlacement(board, move + 1, PLAYERNUM)) {
+                            PLAYERNUM = (PLAYERNUM % 2) + 1;
+                        }
+                    }
+                }
+            }
             PLAYER.setText("Turn: Player " + PLAYERNUM);
             
             for (int i = 0; i < SCREEN_WIDTH/UNIT_SIZE;i++) {
@@ -61,7 +93,7 @@ public class connect4panel extends JPanel implements MouseListener {
         }
     }
     
-    public void gameOver(Graphics g) {
+    public boolean gameOver(Graphics g) {
         int[][] winner = ConnectFour.checkWinner(board);
         JButton restart = new JButton("Restart Game");
         restart.addActionListener(new ActionListener() {
@@ -80,12 +112,15 @@ public class connect4panel extends JPanel implements MouseListener {
             PLAYER.setText("Player " + winner[0][0] + " Wins");
             this.add(restart);
             running = false;
+            return true;
         }
         if (!ConnectFour.placementLeft(board)) {
             PLAYER.setText("Draw");
             this.add(restart);
             running = false;
+            return true;
         }
+        return false;
     }
     
     @Override
@@ -93,12 +128,22 @@ public class connect4panel extends JPanel implements MouseListener {
         // TODO Auto-generated method stub
 
         if (running) {
-             int x = (e.getX() / UNIT_SIZE) + 1;
-             if (ConnectFour.isLegalPlacement(board, x, PLAYERNUM)) {
-                 PLAYERNUM = (PLAYERNUM % 2) + 1;
-                 repaint();
-             }
-
+            int move;
+            if (numPlayers == 1) {
+                if (PLAYERNUM == 1) {
+                    move = (e.getX() / UNIT_SIZE) + 1;
+                    if (ConnectFour.isLegalPlacement(board, move, PLAYERNUM)) {
+                        PLAYERNUM = (PLAYERNUM % 2) + 1;
+                        repaint();
+                    }
+                }
+            } else {
+                move = (e.getX() / UNIT_SIZE) + 1;
+                if (ConnectFour.isLegalPlacement(board, move, PLAYERNUM)) {
+                    PLAYERNUM = (PLAYERNUM % 2) + 1;
+                    repaint();
+                }
+            }
          }
     }
     

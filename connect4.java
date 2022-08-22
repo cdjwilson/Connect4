@@ -110,24 +110,52 @@ class ConnectFour {
         return false;
     }
 
+    static int getNumberOfPlayers() {
+
+        return 1;
+    }
+
     public static void main(String args[]) {
 
         int[][] board = new int[6][7];
         int player = 1;
         int[][] winner;
         printBoard(board);
+        int numPlayers = getNumberOfPlayers();
+
         while (true) {
-        
-            getPiecePlacement(board, player);
-            printBoard(board);
-            player = (player % 2) + 1;
-            winner = checkWinner(board);
-            if (winner[0][0] != 0) {
-                System.out.println("Winner is player " + winner);
-                return;
-            }
-            if (!placementLeft(board)) {
-                return;
+            if (numPlayers == 1) {
+                if (player == 2) {
+                    int move = connect4ai.easyAi(board, player);
+                    if (isLegalPlacement(board, move+1, player)) {
+                        player = (player % 2) + 1;
+                        System.out.println("AI making move");
+                    }
+                } else {
+                    getPiecePlacement(board, player);
+                    player = (player % 2) + 1;
+                }
+                printBoard(board);
+                winner = checkWinner(board);
+                if (winner[0][0] != 0) {
+                    System.out.println("Winner is player " + winner[0][0]);
+                    return;
+                }
+                if (!placementLeft(board)) {
+                    return;
+                }
+            } else {
+                getPiecePlacement(board, player);
+                printBoard(board);
+                player = (player % 2) + 1;
+                winner = checkWinner(board);
+                if (winner[0][0] != 0) {
+                    System.out.println("Winner is player " + winner[0][0]);
+                    return;
+                }
+                if (!placementLeft(board)) {
+                    return;
+                }
             }
         }
 
