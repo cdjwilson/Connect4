@@ -68,7 +68,6 @@ class ConnectFour {
             }
             System.out.println(" ");
         }
-
     }
 
     static boolean isLegalPlacement(int[][] board, int placement, int player) {
@@ -111,8 +110,51 @@ class ConnectFour {
     }
 
     static int getNumberOfPlayers() {
+        Scanner input = new Scanner(System.in);
+        int numplayers = 0;
+        while (true) {
+            System.out.println("Number of players, 1 or 2: ");
+            try {
+                numplayers = input.nextInt();
+            } catch (java.util.InputMismatchException e) {
+                input.nextLine();
+            }
+            if (numplayers == 1 || numplayers == 2) {
+                return numplayers;
+            }
+        }
+    }
 
-        return 1;
+    static int getPlayer() {
+        Scanner input = new Scanner(System.in);
+        int numplayers = 0;
+        while (true) {
+            System.out.println("Choose if you want to be player 1 or 2: ");
+            try {
+                numplayers = input.nextInt();
+            } catch (java.util.InputMismatchException e) {
+                input.nextLine();
+            }
+            if (numplayers == 1 || numplayers == 2) {
+                return numplayers;
+            }
+        }
+    }
+
+    static int getDifficulty() {
+        Scanner input = new Scanner(System.in);
+        int difficulty = 0;
+        while (true) {
+            System.out.println("Type number for difficulty you want, 1: easy, 2: hard ");
+            try {
+                difficulty = input.nextInt();
+            } catch (java.util.InputMismatchException e) {
+                input.nextLine();
+            }
+            if (difficulty == 1 || difficulty == 2) {
+                return difficulty;
+            }
+        }
     }
 
     public static void main(String args[]) {
@@ -120,16 +162,26 @@ class ConnectFour {
         int[][] board = new int[6][7];
         int player = 1;
         int[][] winner;
-        printBoard(board);
         int numPlayers = getNumberOfPlayers();
+        int playerchoice = 0;
+        int difficulty = 0;
+        if (numPlayers == 1) {
+            playerchoice = getPlayer();
+            difficulty = getDifficulty();
+        }
+        printBoard(board);
 
         while (true) {
             if (numPlayers == 1) {
-                if (player == 2) {
-                    int move = connect4ai.easyAi(board, player);
+                if (player != playerchoice) {
+                    int move = -1;
+                    if (difficulty == 1) {
+                        move = connect4ai.easyAi(board, player);
+                    } else {
+                        move = connect4ai.hardAi(board, player);
+                    }
                     if (isLegalPlacement(board, move+1, player)) {
                         player = (player % 2) + 1;
-                        System.out.println("AI making move");
                     }
                 } else {
                     getPiecePlacement(board, player);
@@ -158,7 +210,5 @@ class ConnectFour {
                 }
             }
         }
-
     }
-
 }
